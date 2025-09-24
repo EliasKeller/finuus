@@ -1,14 +1,13 @@
 
 "use client"
 import { useEffect } from "react";
-import { getStocks } from "../../api/services/stocks";
+import { getAllProducts } from "../../api/services/stocks";
 export default function Home() {
 
 
-const loadCSV = () => {
-
+const loadAllProducts = () => {
   return Promise.all([]).then(() => {
-    getStocks().then(data => {
+    getAllProducts().then(data => {
       console.log(data);
     });
   });
@@ -17,7 +16,7 @@ const loadCSV = () => {
 
 
 useEffect(() => {
-  loadCSV();
+  loadAllProducts();
 }, []);
 
 
@@ -25,7 +24,7 @@ useEffect(() => {
 
   return (
     <div className="flex justify-center items-center flex-col h-[80vh]">
-      <h1>Hi there! This is the Finuus!</h1>
+      <h1>Hi there! This is the FinusasdASDus!</h1>
     </div>
   );
 }

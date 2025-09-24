@@ -1,12 +1,20 @@
 "use client";
 
-const getStocks = () => {
+const getAllOrders = () => {
     return new Promise((resolve, reject) => {
-        return fetch("/api/stocks").then(r => r.json())
+        return fetch("/api/orders").then(r => r.json())
+            .then(resolve)
+            .catch(reject);
+    });
+};
+
+const getAllProducts = () => {
+    return new Promise((resolve, reject) => {
+        return fetch("/api/products").then(r => r.json())
             .then(resolve)
             .catch(reject);
     });
 };
 
 
-export { getStocks };
+export { getAllOrders, getAllProducts };
