@@ -16,6 +16,7 @@ const loadAllProducts = () => {
 
 
 useEffect(() => {
+  console.log("Loading all products...");
   loadAllProducts();
 }, []);
 
@@ -24,7 +25,8 @@ useEffect(() => {
 
   return (
     <div className="flex justify-center items-center flex-col h-[80vh]">
-      <h1>Hi there! This is the FinusasdASDus!</h1>
+      <h1>Hi there! This is the FinusasdASDusasdfasdfasdf!</h1>
+      <h1>The value of TWELVE_DATA_API_KEY is: {process.env.TWELVE_DATA_API_KEY}</h1>
     </div>
   );
 }
