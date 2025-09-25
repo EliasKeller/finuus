@@ -1,16 +1,22 @@
 
 "use client"
 import { useEffect } from "react";
-import { getAllProducts } from "../../api/services/stocks";
+import { getAllProducts, getHistoricalStockDataByIsbn } from "../../api/services/stocks";
 import { ChartComponent } from "./components/chart";
 export default function Home() {
 
 
 const loadAllProducts = () => {
   return Promise.all([]).then(() => {
-    getAllProducts().then(data => {
+    getAllProducts()
+    .then(data => {
       console.log(data);
-    });
+    })
+    .then(getHistoricalStockDataByIsbn("AAPL", "1day"))
+    .then(data => {
+        console.log("Historical stock data:", data);
+      })
+      .catch(err => console.error("Error fetching historical stock data:", err));
   });
 }
 
