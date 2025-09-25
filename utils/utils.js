@@ -1,5 +1,12 @@
 const mapHistoricalStockData = (data) => {
-    console.log("Mapping historical stock data:", data);
+
+    return data.values.map(item => 
+        {
+            return {
+                time:item.datetime,
+                value: Number(item.close)
+                }
+        });
 }
 
 

@@ -26,6 +26,7 @@ export const ChartComponent = ({ data }) => {
       }
 
       // Daten (time: 'YYYY-MM-DD', value: number)
+      
       const ds = [...data].sort((a, b) => new Date(a.time) - new Date(b.time));
       series.setData(ds);
     })();
