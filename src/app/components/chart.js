@@ -87,7 +87,7 @@ export const ChartComponent = ({ data }) => {
   // feste Größe → garantiert >0px Breite
   return (
     <>
-      <div ref={ref} style={{ width: 640, height: 320 }} />
+      {/* <div ref={ref} style={{ width: 640, height: 320 }} /> */}
       <div ref={chartContainerRef} />
     </>
   );
