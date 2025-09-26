@@ -1,7 +1,7 @@
 "use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { registerSW } from "@/sw-register";
+//import { registerSW } from "@/sw-register";
 import { useEffect } from "react";
 
 const geistSans = Geist({
@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
 
   useEffect(() => {
-    registerSW();
+    //registerSW();
   }, []);
 
   return (

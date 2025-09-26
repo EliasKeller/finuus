@@ -1,94 +1,55 @@
+// src/app/components/Chart.jsx
 "use client";
 
+import { version } from "lightweight-charts"; console.log(version());
 
-import { AreaSeries, createChart, ColorType } from 'lightweight-charts';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
+import { createChart, AreaSeries, ColorType } from "lightweight-charts";
 
-export const ChartComponent = ({ data }) => {
-  const ref = useRef(null);
+export function ChartComponent({ data }) {
+  const containerRef = useRef(null);
 
-  const colors = {
-    background: 'white',
-    lineColor: '#2962FF',
-    textColor: 'black',
-    areaTopColor: '#2962FF',
-    areaBottomColor: 'rgba(41, 98, 255, 0.28)',
-  };
+  useEffect(() => {
+    const chartContainerElement = containerRef.current;
+    if (!chartContainerElement) return;
 
-  const chartContainerRef = useRef();
+    const chart = createChart(chartContainerElement, {
+      width: chartContainerElement.clientWidth || 600,
+      height: 300,
+      layout: {
+        background: { type: ColorType.Solid, color: "black" },
+        textColor: "white",
+      },
+      rightPriceScale: { borderVisible: false },
+      timeScale: { borderVisible: false },
+    });
 
-      useEffect(
-        () => {
-            const handleResize = () => {
-                chart.applyOptions({ width: chartContainerRef.current.clientWidth });
-            };
+    const series = chart.addSeries(AreaSeries, {
+      lineColor: "#2962FF",
+      topColor: "rgba(41,98,255,0.40)",
+      bottomColor: "rgba(41,98,255,0.05)",
+    });
 
-            const chart = createChart(chartContainerRef.current, {
-                layout: {
-                    background: { type: ColorType.Solid, color: colors.background },
-                    textColor: colors.textColor,
-                },
-                width: chartContainerRef.current.clientWidth,
-                height: 300,
-            });
-            chart.timeScale().fitContent();
+    const ds = [...(data ?? [])]
+      .map(d => ({ time: d.time, value: Number(d.value) }))
+      .filter(d => d.time && Number.isFinite(d.value))
+      .sort((a, b) => new Date(a.time) - new Date(b.time));
 
-            if (typeof chart.addAreaSeries === "function") {
-            } else if (typeof chart.addLineSeries === "function") {
-              console.warn("addAreaSeries fehlt → fallback Line");
-            } else {
-              console.error("Weder addAreaSeries noch addLineSeries vorhanden!", chart);
-              return;
-      }
+    series.setData(ds);
 
-            const newSeries = chart.addSeries(AreaSeries, { lineColor: colors.lineColor, topColor: colors.areaTopColor, bottomColor: colors.areaBottomColor });
-            const ds = [...data].sort((a, b) => new Date(a.time) - new Date(b.time));
-            newSeries.setData(ds);
+    chart.timeScale().fitContent();
 
-            window.addEventListener('resize', handleResize);
+    const resizeObserver = new ResizeObserver(([entry]) => {
+      chart.applyOptions({ width: Math.floor(entry.contentRect.width) });
+    });
+    resizeObserver.observe(chartContainerElement);
 
-            return () => {
-                window.removeEventListener('resize', handleResize);
+    return () => {
+      resizeObserver.disconnect();
+      chart.remove();
+    };
+  }, [data]);
 
-                chart.remove();
-            };
-        },
-        [data, colors.background, colors.lineColor, colors.textColor, colors.areaTopColor, colors.areaBottomColor]
-    );
-
-  /*useEffect(() => {
-    let chart, series;
-    (async () => {
-      const mod = await import("lightweight-charts"); // named export
-      console.log("LWC exports:", Object.keys(mod));   // Debug: sollte u.a. createChart zeigen
-      const { createChart } = mod;
-
-      const el = ref.current;
-      chart = createChart(el, { width: 600, height: 300 });
-
-      // Wenn addAreaSeries fehlt, fallback auf Line (Debug-Log hilft)
-      if (typeof chart.addAreaSeries === "function") {
-        series = chart.addAreaSeries();
-      } else if (typeof chart.addLineSeries === "function") {
-        console.warn("addAreaSeries fehlt → fallback Line");
-        series = chart.addLineSeries({ lineWidth: 2 });
-      } else {
-        console.error("Weder addAreaSeries noch addLineSeries vorhanden!", chart);
-        return;
-      }
-
-      // Daten (time: 'YYYY-MM-DD', value: number)
-      const ds = [...data].sort((a, b) => new Date(a.time) - new Date(b.time));
-      series.setData(ds);
-    })();
-    return () => chart?.remove();
-  }, [data]);*/
-
-  // feste Größe → garantiert >0px Breite
-  return (
-    <>
-      {/* <div ref={ref} style={{ width: 640, height: 320 }} /> */}
-      <div ref={chartContainerRef} />
-    </>
-  );
+  // WICHTIG: sichtbare Breite/Höhe
+  return <div ref={containerRef} style={{ width: "100%", height: 300 }} />;
 }
