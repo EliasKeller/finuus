@@ -15,10 +15,26 @@
       "skipFiles": ["<node_internals>/**"]
     },
     {
-      "name": "Next.js: Attach (Server läuft schon)",
-      "type": "pwa-node",
-      "request": "attach",
-      "port": 9229
+      "name": "Next.js: Client (Brave)",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "runtimeExecutable": "/snap/bin/brave",
+      "runtimeArgs": [
+        "--remote-debugging-port=9222",
+        "--user-data-dir=${workspaceFolder}/.vscode/brave-debug-profile",
+        "--no-first-run",
+        "--no-default-browser-check"
+      ],
+      "timeout": 20000,
+      "trace": false
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Next.js: Full-Stack (Brave)",
+      "configurations": ["Next.js: Dev (Server)", "Next.js: Client (Brave)"]
     }
   ]
 }

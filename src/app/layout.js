@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
 
   useEffect(() => {
-    registerSW;
+    registerSW();
   }, []);
 
   return (
