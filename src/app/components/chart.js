@@ -1,23 +1,29 @@
-// src/app/components/Chart.jsx
 "use client";
-
-import { version } from "lightweight-charts"; console.log(version());
-
 import { useEffect, useRef } from "react";
 import { createChart, AreaSeries, ColorType } from "lightweight-charts";
 
 export function ChartComponent({ data }) {
   const containerRef = useRef(null);
 
+  const sortData = (data) => {
+    return [...(data ?? [])]
+      .map(d => ({ time: d.time, value: Number(d.value) }))
+      .filter(d => d.time && Number.isFinite(d.value))
+      .sort((a, b) => new Date(a.time) - new Date(b.time));
+  };
+
+
   useEffect(() => {
     const chartContainerElement = containerRef.current;
-    if (!chartContainerElement) return;
+    if (!chartContainerElement) {
+      return;
+    }
 
     const chart = createChart(chartContainerElement, {
       width: chartContainerElement.clientWidth || 600,
       height: 300,
       layout: {
-        background: { type: ColorType.Solid, color: "black" },
+        background: { type: ColorType.VerticalGradient, color: "black" },
         textColor: "white",
       },
       rightPriceScale: { borderVisible: false },
@@ -30,12 +36,8 @@ export function ChartComponent({ data }) {
       bottomColor: "rgba(41,98,255,0.05)",
     });
 
-    const ds = [...(data ?? [])]
-      .map(d => ({ time: d.time, value: Number(d.value) }))
-      .filter(d => d.time && Number.isFinite(d.value))
-      .sort((a, b) => new Date(a.time) - new Date(b.time));
-
-    series.setData(ds);
+    const sortedData = sortData(data);
+    series.setData(sortedData);
 
     chart.timeScale().fitContent();
 
@@ -50,6 +52,9 @@ export function ChartComponent({ data }) {
     };
   }, [data]);
 
-  // WICHTIG: sichtbare Breite/Höhe
-  return <div ref={containerRef} style={{ width: "100%", height: 300 }} />;
+  return (
+    <div className="w-full p-4 m-4 border rounded-lg shadow-lg bg-black border-white">
+      <div ref={containerRef} style={{ width: "100%", height: 300 }} />
+    </div>
+  );
 }
