@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getAllProducts, getHistoricalStockDataByIsbn } from "../../api/services/stocks";
 import { ChartComponent } from "./components/chart";
+import { PieChart } from "./components/pieChart";
 import { Card } from "./components/card";
 export default function Home() {
   const [stocks, setStocks] = useState([]);
@@ -25,6 +26,9 @@ export default function Home() {
     loadAllProducts();
   }, []);
 
+  const labels = ["AAPL", "MSFT", "NVDA", "Cash"];
+  const values = [45, 25, 20, 10];
+
   return (
     <div className="flex justify-center items-center flex-col h-[80vh]">
       <Card
@@ -36,6 +40,7 @@ export default function Home() {
         onClick={() => alert('Card clicked!')}
       />
       <ChartComponent data={stocks} />
+       <PieChart labels={labels} values={values} title="Portfolio" />
     </div>
   );
 }
