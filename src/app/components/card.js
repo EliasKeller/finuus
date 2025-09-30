@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { Button } from "./button";
 
-export function Card({ className = "", title, isin, provitInPercent, currentPrice, currency, onClick }) {
+export function Card({ className = "", title, isin, provitInPercent, currentPrice, currency, href }) {
 
   return (
     <div className={`flex justify-between w-96 p-4 m-4 border rounded-lg shadow-lg bg-black border-white ${className}`}>
@@ -15,7 +15,7 @@ export function Card({ className = "", title, isin, provitInPercent, currentPric
             </p>
             </div>
             <div className="flex items-end mt-2">
-              <Button onClick={onClick}  icon="iconoir:fast-arrow-right" gradientBackground={true}>
+              <Button href={href} icon="iconoir:fast-arrow-right" gradientBackground={true}>
               </Button>
             </div>
     </div>

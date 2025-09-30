@@ -43,7 +43,7 @@ export default function Home() {
           provitInPercent={5.2}
           currentPrice={element.close}
           currency={element.currency}
-          onClick={() => alert('Card clicked!')}
+          href={`/stocks/${element.isin}`}
         />
       ))}
       </div>
