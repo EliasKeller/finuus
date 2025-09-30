@@ -3,10 +3,10 @@
 import { useRef } from "react";
 import { Button } from "./button";
 
-export function Card({ title, isin, provitInPercent, currentPrice, currency, onClick }) {
+export function Card({ className = "", title, isin, provitInPercent, currentPrice, currency, onClick }) {
 
   return (
-    <div className="flex justify-between w-96 p-4 m-4 border rounded-lg shadow-lg bg-black border-white">
+    <div className={`flex justify-between w-96 p-4 m-4 border rounded-lg shadow-lg bg-black border-white ${className}`}>
         <div>
             <h2 className="text-xl font-bold">{title} ({isin})</h2>
             <p className="text-sm text-gray-400">Current Price: {currentPrice} {currency}</p>

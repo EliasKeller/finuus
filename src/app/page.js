@@ -1,24 +1,26 @@
 
 "use client"
 import { useEffect, useState } from "react";
-import { getAllProducts, getHistoricalStockDataByIsbn } from "../../api/services/stocks";
-import { ChartComponent } from "./components/chart";
-import { PieChart } from "./components/pieChart";
+import { getAllProducts, getHistoricalStockDataByIsbn, getMetadataOfProducts } from "../../api/services/stocks";
+import { LineChartComponent } from "./components/lineChat";
+import { PieChartComponent } from "./components/pieChart";
 import { Card } from "./components/card";
 export default function Home() {
   const [stocks, setStocks] = useState([]);
+  const [products, setProducts] = useState([]);
 
   const loadAllProducts = () => {
     return Promise.all([]).then(() => {
         getAllProducts()
-        .then(data => {
-          console.log(data);
-        })
+        .then(products => getMetadataOfProducts(Object.keys(products)))
+        .then(productsWithMetadata => {
+          console.log("Products with metadata:", productsWithMetadata);
+          setProducts(productsWithMetadata)})
         .then(() => getHistoricalStockDataByIsbn("AAPL", "1day"))
         .then(data => {
             setStocks(data);
-          })
-          .catch(err => console.error("Error fetching historical stock data:", err));
+        })
+        .catch(err => console.error("Error fetching historical stock data:", err));
       });
   }
 
@@ -30,17 +32,23 @@ export default function Home() {
   const values = [45, 25, 20, 10];
 
   return (
-    <div className="flex justify-center items-center flex-col h-[80vh]">
-      <Card
-        title="Apple Inc."
-        isin="US0378331005"
-        provitInPercent={5.2}
-        currentPrice={150.25}
-        currency="USD"
-        onClick={() => alert('Card clicked!')}
-      />
-      <ChartComponent data={stocks} />
-       <PieChart labels={labels} values={values} title="Portfolio" />
+    <div className="flex justify-center items-center flex-col">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 place-items-center w-full">
+      {products.map(element => (
+        <Card
+          className="w-full max-w-sm"
+          key={element.isin}
+          title={element.name}
+          isin={element.isin}
+          provitInPercent={5.2}
+          currentPrice={element.close}
+          currency={element.currency}
+          onClick={() => alert('Card clicked!')}
+        />
+      ))}
+      </div>
+      <LineChartComponent data={stocks} />
+       <PieChartComponent labels={labels} values={values} title="Portfolio" />
     </div>
   );
 }

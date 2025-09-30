@@ -1,6 +1,6 @@
 "use client";
 
-import { HISTORICAL_STOCK_TEST_DATA } from "../../utils/const";
+import { HISTORICAL_STOCK_TEST_DATA, TWELVE_DATA_API_URL } from "../../utils/const";
 import { mapHistoricalStockData } from "../../utils/utils";
 
 const getAllOrders = () => {
@@ -20,10 +20,26 @@ const getAllProducts = () => {
 };
 
 
+const getMetadataOfProducts = (productIsbn = []) => {
+    console.log("Fetching metadata for products:", productIsbn);
+    const url = `${TWELVE_DATA_API_URL}/quote?isin=${productIsbn.join(",")}&apikey=${process.env.NEXT_PUBLIC_TWELVE_DATA_API_KEY}`;
+
+    return new Promise((resolve, reject) => {
+        return fetch(url).then(r => r.json())
+            .then(response => {
+                const parsedProducts = Object.entries(response).map(([isin, obj]) => ({
+                    isin,
+                    ...obj
+                }));
+
+                resolve(parsedProducts);
+            })
+            .catch(reject);
+    });
+};
+
 const getHistoricalStockDataByIsbn = (isbn, interval="1month", ) => {
     return new Promise((resolve, reject) => {
-    // const apiKey = process.env.TWELVE_DATA_API_KEY;
-    // const url = `https://api.twelvedata.com/time_series?symbol=${isbn}&interval=${interval}&apikey=${apiKey}`;
 
         const fetchedData = HISTORICAL_STOCK_TEST_DATA;
         const mappedData = mapHistoricalStockData(fetchedData);
@@ -32,4 +48,9 @@ const getHistoricalStockDataByIsbn = (isbn, interval="1month", ) => {
 };
 
 
-export { getAllOrders, getAllProducts, getHistoricalStockDataByIsbn};
+export { 
+    getAllOrders, 
+    getAllProducts, 
+    getMetadataOfProducts,
+    getHistoricalStockDataByIsbn 
+};

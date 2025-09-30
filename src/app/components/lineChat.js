@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { createChart, AreaSeries, ColorType } from "lightweight-charts";
 
-export function ChartComponent({ data }) {
+export function LineChartComponent({ data }) {
   const containerRef = useRef(null);
 
   const sortData = (data) => {

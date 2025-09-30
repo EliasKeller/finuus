@@ -9,11 +9,7 @@ const defaultLabels = ["Tech", "Health", "Energy", "Finance"];
 const defaultValues = [40, 25, 20, 15];
 
 
-export function PieChart({
-  labels = defaultLabels,
-  values = defaultValues,
-  title = "Allocation",
-}) {
+export function PieChartComponent({ labels = defaultLabels, values = defaultValues, title }) {
   const sum = values.reduce((a, b) => a + b, 0);
 
   const data = {
@@ -28,7 +24,7 @@ export function PieChart({
           "rgba(234,179,8,0.7)",    // yellow-500
           "rgba(244,63,94,0.7)",    // rose-500
         ],
-        //borderColor: "rgba(255,255,255,0.9)",
+        borderColor: "rgba(255,255,255,0.9)",
         borderWidth: 0,
         hoverOffset: 6,
       },
