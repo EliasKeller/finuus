@@ -21,7 +21,6 @@ const getAllProducts = () => {
 
 
 const getMetadataOfProducts = (productIsbn = []) => {
-    console.log("Fetching metadata for products:", productIsbn);
     const url = `${TWELVE_DATA_API_URL}/quote?isin=${productIsbn.join(",")}&apikey=${process.env.NEXT_PUBLIC_TWELVE_DATA_API_KEY}`;
 
     return new Promise((resolve, reject) => {
@@ -38,12 +37,16 @@ const getMetadataOfProducts = (productIsbn = []) => {
     });
 };
 
-const getHistoricalStockDataByIsbn = (isbn, interval="1month", ) => {
-    return new Promise((resolve, reject) => {
+const getHistoricalStockDataByIsbn = (isin, interval="1month", ) => {
+    const url = `${TWELVE_DATA_API_URL}/time_series?isin=${isin}&interval=${interval}&apikey=${process.env.NEXT_PUBLIC_TWELVE_DATA_API_KEY}`;
 
-        const fetchedData = HISTORICAL_STOCK_TEST_DATA;
-        const mappedData = mapHistoricalStockData(fetchedData);
-        resolve(mappedData);
+    return new Promise((resolve, reject) => {
+        return fetch(url).then(r => r.json())
+            .then(response => {
+                const mappedData = mapHistoricalStockData(response);
+                resolve(mappedData);
+            })
+            .catch(reject);
     });
 };
 

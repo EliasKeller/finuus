@@ -6,20 +6,13 @@ import { LineChartComponent } from "./components/lineChat";
 import { PieChartComponent } from "./components/pieChart";
 import { Card } from "./components/card";
 export default function Home() {
-  const [stocks, setStocks] = useState([]);
   const [products, setProducts] = useState([]);
 
   const loadAllProducts = () => {
     return Promise.all([]).then(() => {
         getAllProducts()
         .then(products => getMetadataOfProducts(Object.keys(products)))
-        .then(productsWithMetadata => {
-          console.log("Products with metadata:", productsWithMetadata);
-          setProducts(productsWithMetadata)})
-        .then(() => getHistoricalStockDataByIsbn("AAPL", "1day"))
-        .then(data => {
-            setStocks(data);
-        })
+        .then(productsWithMetadata => setProducts(productsWithMetadata))
         .catch(err => console.error("Error fetching historical stock data:", err));
       });
   }
@@ -47,7 +40,7 @@ export default function Home() {
         />
       ))}
       </div>
-      <LineChartComponent data={stocks} />
+      
        <PieChartComponent labels={labels} values={values} title="Portfolio" />
     </div>
   );
