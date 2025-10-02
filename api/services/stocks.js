@@ -37,7 +37,7 @@ const getMetadataOfProducts = (productIsbn = []) => {
     });
 };
 
-const getHistoricalStockDataByIsbn = (isin, interval="1month", ) => {
+const getHistoricalStockDataByIsbn = (isin, interval="1day", ) => {
     const url = `${TWELVE_DATA_API_URL}/time_series?isin=${isin}&interval=${interval}&apikey=${process.env.NEXT_PUBLIC_TWELVE_DATA_API_KEY}`;
 
     return new Promise((resolve, reject) => {

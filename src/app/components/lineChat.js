@@ -1,9 +1,12 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createChart, AreaSeries, ColorType } from "lightweight-charts";
+import { Button } from "./button";
 
 export function LineChartComponent({ data }) {
-  const containerRef = useRef(null);
+  const chartRef = useRef(null);
+  const chartInstance= useRef(null);
+  const [chartData, setChartData] = useState([]);
 
   const sortData = (data) => {
     return [...(data ?? [])]
@@ -14,7 +17,7 @@ export function LineChartComponent({ data }) {
 
 
   useEffect(() => {
-    const chartContainerElement = containerRef.current;
+    const chartContainerElement = chartRef.current;
     if (!chartContainerElement) {
       return;
     }
@@ -38,6 +41,7 @@ export function LineChartComponent({ data }) {
 
     const sortedData = sortData(data);
     series.setData(sortedData);
+    setChartData(sortedData);
 
     chart.timeScale().fitContent();
 
@@ -46,15 +50,50 @@ export function LineChartComponent({ data }) {
     });
     resizeObserver.observe(chartContainerElement);
 
+    chartInstance.current = chart;
     return () => {
       resizeObserver.disconnect();
       chart.remove();
     };
   }, [data]);
 
+
+  /* *************************
+            HELPERS
+  ************************* */
+const minusDaysIso = (isoYYYYMMDD, days) => {
+  const date = new Date(isoYYYYMMDD + "T00:00:00Z");
+  date.setUTCDate(date.getUTCDate() - days);
+  return date.toISOString().slice(0, 10);
+}
+
+const setRangeByDays = (days) => {
+  const chart = chartInstance.current;
+  if (!chart || chartData.length === 0) return;
+
+  const last = chartData.at(-1).time;
+  const from = minusDaysIso(last, days);
+  chart.timeScale().setVisibleRange({ from, to: last });
+};
+
+const fitContent = () => {
+  const chart = chartInstance.current;
+  if (!chart) return;
+  chart.timeScale().fitContent();
+};
+
   return (
-    <div className="w-full p-4 m-4 border rounded-lg shadow-lg bg-black border-white">
-      <div ref={containerRef} style={{ width: "100%", height: 300 }} />
+    <div className="flex justify-center w-full p-4">
+      <div className="flex flex-col justify-center w-full lg:w-5/6 p-4 border rounded-lg shadow-lg border-white">
+        <div className="flex justify-end gap-2 mb-2">
+              <Button onClick={() => setRangeByDays(1)} text="1D" gradientBackground={true} />
+              <Button onClick={() => setRangeByDays(7)} text="1W" gradientBackground={true} />
+              <Button onClick={() => setRangeByDays(30)} text="1M" gradientBackground={true} />
+              <Button onClick={() => setRangeByDays(365)} text="1Y" gradientBackground={true} />
+              <Button onClick={() => fitContent()} text="All" gradientBackground={true} />
+        </div>
+        <div ref={chartRef} style={{ width: "100%", height: 300 }} />
+      </div>
     </div>
   );
 }
