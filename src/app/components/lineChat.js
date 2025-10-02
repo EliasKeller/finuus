@@ -6,7 +6,66 @@ import { Button } from "./button";
 export function LineChartComponent({ data }) {
   const chartRef = useRef(null);
   const chartInstance= useRef(null);
+  const seriesRef = useRef(null);
+  const anchorRef = useRef(null); 
   const [chartData, setChartData] = useState([]);
+  const [deltaInfo, setDeltaInfo] = useState(null); 
+
+
+  const getChartOptions = (chartContainerElement) => {
+    return {
+      width: chartContainerElement.clientWidth,
+      height: chartContainerElement.clientHeight,
+      layout: {
+        background: { type: ColorType.VerticalGradient, color: "black" },
+        textColor: "white",
+      },
+      leftPriceScale: {
+        visible: true,
+        borderVisible: false,
+      },
+      rightPriceScale: {
+          visible: false,
+      },
+      timeScale: {
+          borderVisible: false,
+      },
+      crosshair: {
+          horzLine: {
+              visible: false,
+              labelVisible: false,
+          },
+          vertLine: {
+              visible: true,
+              style: 0,
+              width: 2,
+              color: 'rgba(0, 255, 76, 0.1)',
+              labelVisible: false,
+          },
+      },
+      grid: {
+          vertLines: {
+              visible: false,
+          },
+          horzLines: {
+              visible: false,
+          },
+      },
+    };
+  };
+
+  const seriesOptions = {
+    lineColor: "#2962FF",
+    topColor: "rgba(41,98,255,0.40)",
+    bottomColor: "rgba(41,98,255,0.05)",
+  };
+
+  const seriesPriceScaleOptions = {
+    scaleMargins: {
+        top: 0.25, 
+        bottom: 0.1,
+    },
+  };
 
   const sortData = (data) => {
     return [...(data ?? [])]
@@ -22,28 +81,18 @@ export function LineChartComponent({ data }) {
       return;
     }
 
-    const chart = createChart(chartContainerElement, {
-      width: chartContainerElement.clientWidth || 600,
-      height: 300,
-      layout: {
-        background: { type: ColorType.VerticalGradient, color: "black" },
-        textColor: "white",
-      },
-      rightPriceScale: { borderVisible: false },
-      timeScale: { borderVisible: false },
-    });
+    const chart = createChart(chartContainerElement, getChartOptions(chartContainerElement));
 
-    const series = chart.addSeries(AreaSeries, {
-      lineColor: "#2962FF",
-      topColor: "rgba(41,98,255,0.40)",
-      bottomColor: "rgba(41,98,255,0.05)",
-    });
+    const series = chart.addSeries(AreaSeries, seriesOptions);
 
     const sortedData = sortData(data);
+    series.priceScale().applyOptions(seriesPriceScaleOptions);
     series.setData(sortedData);
     setChartData(sortedData);
 
     chart.timeScale().fitContent();
+
+    chart.subscribeClick(onClick);
 
     const resizeObserver = new ResizeObserver(([entry]) => {
       chart.applyOptions({ width: Math.floor(entry.contentRect.width) });
@@ -51,11 +100,48 @@ export function LineChartComponent({ data }) {
     resizeObserver.observe(chartContainerElement);
 
     chartInstance.current = chart;
+    seriesRef.current = series;
     return () => {
       resizeObserver.disconnect();
       chart.remove();
     };
   }, [data]);
+
+
+/* *************************
+          EVENTS
+  ************************* */
+const onClick = (clickEvent) => {
+      const serieData = clickEvent?.seriesData?.get(seriesRef.current);
+      const value = serieData?.value;
+      const time = clickEvent?.time;
+
+      if (value == null || time == null) {
+        return;
+      }
+
+      if (!anchorRef.current) {
+        anchorRef.current = { time, value };
+        setDeltaInfo(null);
+        return;
+      }
+
+      // zweiter Klick -> Differenzen berechnen
+      const from = anchorRef.current;
+      const abs = value - from.value;
+      const pct = (abs / from.value) * 100;
+      setDeltaInfo({
+        abs,
+        pct,
+        fromVal: from.value,
+        toVal: value,
+        fromTime: from.time,
+        toTime: time,
+      });
+
+      // zurücksetzen (nächste Messung wieder 2 Klicks)
+      anchorRef.current = null;
+};
 
 
   /* *************************
@@ -90,9 +176,19 @@ const fitContent = () => {
               <Button onClick={() => setRangeByDays(7)} text="1W" gradientBackground={true} />
               <Button onClick={() => setRangeByDays(30)} text="1M" gradientBackground={true} />
               <Button onClick={() => setRangeByDays(365)} text="1Y" gradientBackground={true} />
-              <Button onClick={() => fitContent()} text="All" gradientBackground={true} />
+              <Button onClick={fitContent} text="All" gradientBackground={true} />
         </div>
-        <div ref={chartRef} style={{ width: "100%", height: 300 }} />
+
+        {/* Δ-Info Anzeige */}
+          {deltaInfo && (
+            <div className="text-xs font-mono px-2 py-1 rounded bg-white/10 text-white border border-white/20">
+              Δ {deltaInfo.abs.toFixed(2)} ({deltaInfo.pct.toFixed(2)}%) ·
+              &nbsp;{deltaInfo.fromTime} → {deltaInfo.toTime}
+              &nbsp;| {deltaInfo.fromVal.toFixed(2)} → {deltaInfo.toVal.toFixed(2)}
+            </div>
+          )}
+
+        <div ref={chartRef} className="w-full h-96" />
       </div>
     </div>
   );
