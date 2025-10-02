@@ -5,13 +5,17 @@ import { Button } from "./button";
 
 export function LineChartComponent({ data }) {
   const chartRef = useRef(null);
-  const chartInstance= useRef(null);
+  const chartInstance = useRef(null);
   const seriesRef = useRef(null);
-  const anchorRef = useRef(null); 
+  const anchorRef = useRef(null);
+  const toolTipWidth = 96;
+  const toolTip = useRef(null);
   const [chartData, setChartData] = useState([]);
   const [deltaInfo, setDeltaInfo] = useState(null); 
 
-
+/* *************************
+          CONST
+  ************************* */
   const getChartOptions = (chartContainerElement) => {
     return {
       width: chartContainerElement.clientWidth,
@@ -74,7 +78,9 @@ export function LineChartComponent({ data }) {
       .sort((a, b) => new Date(a.time) - new Date(b.time));
   };
 
-
+/* *************************
+          USEFFECT
+  ************************* */
   useEffect(() => {
     const chartContainerElement = chartRef.current;
     if (!chartContainerElement) {
@@ -150,6 +156,46 @@ const onGraphHover = (hoverEvent) => {
   console.log("hoverEvent", hoverEvent);
 };
 
+/*
+
+// Create and style the tooltip html element
+
+// update tooltip
+chart.subscribeCrosshairMove(param => {
+    if (
+        param.point === undefined ||
+        !param.time ||
+        param.point.x < 0 ||
+        param.point.x > container.clientWidth ||
+        param.point.y < 0 ||
+        param.point.y > container.clientHeight
+    ) {
+        toolTip.style.display = 'none';
+    } else {
+        // time will be in the same format that we supplied to setData.
+        // thus it will be YYYY-MM-DD
+        const dateStr = param.time;
+        toolTip.style.display = 'block';
+        const data = param.seriesData.get(series);
+        const price = data.value !== undefined ? data.value : data.close;
+        toolTip.innerHTML = `<div style="color: ${'rgba( 239, 83, 80, 1)'}">⬤ ABC Inc.</div><div style="font-size: 24px; margin: 4px 0px; color: ${'black'}">
+            ${Math.round(100 * price) / 100}
+            </div><div style="color: ${'black'}">
+            ${dateStr}
+            </div>`;
+
+        let left = param.point.x; // relative to timeScale
+        const timeScaleWidth = chart.timeScale().width();
+        const priceScaleWidth = chart.priceScale('left').width();
+        const halfTooltipWidth = toolTipWidth / 2;
+        left += priceScaleWidth - halfTooltipWidth;
+        left = Math.min(left, priceScaleWidth + timeScaleWidth - toolTipWidth);
+        left = Math.max(left, priceScaleWidth);
+
+        toolTip.style.left = left + 'px';
+        toolTip.style.top = 0 + 'px';
+    }
+});*/
 
   /* *************************
             HELPERS
@@ -195,8 +241,11 @@ const fitContent = () => {
             </div>
           )}
 
-        <div ref={chartRef} className="w-full h-96" />
-      </div>
+        <div ref={chartRef} className="w-full h-96">
+          <div ref={toolTip} style={{ display: 'none', borderColor: `rgba(239, 83, 80, 1)`, background: `rgba(255, 255, 255, 0.25)`, width: `${toolTipWidth}px`, height: '300px', position: 'absolute', padding: '8px', boxSizing: 'border-box', fontSize: '12px', textAlign: 'left', zIndex: 1000, top: '12px', left: '12px', pointerEvents: 'none', borderRadius: '4px 4px 0px 0px', borderBottom: 'none', boxShadow: '0 2px 5px 0 rgba(117, 134, 150, 0.45)', fontFamily: '-apple-system, BlinkMacSystemFont, \'Trebuchet MS\', Roboto, Ubuntu, sans-serif', WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
+          </div>
+        </div>
+      </div>  
     </div>
   );
 }
