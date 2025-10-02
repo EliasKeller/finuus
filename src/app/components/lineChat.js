@@ -92,7 +92,8 @@ export function LineChartComponent({ data }) {
 
     chart.timeScale().fitContent();
 
-    chart.subscribeClick(onClick);
+    chart.subscribeClick(onGraphClick);
+    chart.subscribeCrosshairMove(onGraphHover);
 
     const resizeObserver = new ResizeObserver(([entry]) => {
       chart.applyOptions({ width: Math.floor(entry.contentRect.width) });
@@ -103,6 +104,8 @@ export function LineChartComponent({ data }) {
     seriesRef.current = series;
     return () => {
       resizeObserver.disconnect();
+      chart.unsubscribeClick(onGraphClick);
+      chart.unsubscribeCrosshairMove(onGraphHover);
       chart.remove();
     };
   }, [data]);
@@ -111,7 +114,7 @@ export function LineChartComponent({ data }) {
 /* *************************
           EVENTS
   ************************* */
-const onClick = (clickEvent) => {
+const onGraphClick = (clickEvent) => {
       const serieData = clickEvent?.seriesData?.get(seriesRef.current);
       const value = serieData?.value;
       const time = clickEvent?.time;
@@ -141,6 +144,10 @@ const onClick = (clickEvent) => {
 
       // zurücksetzen (nächste Messung wieder 2 Klicks)
       anchorRef.current = null;
+};
+
+const onGraphHover = (hoverEvent) => {
+  console.log("hoverEvent", hoverEvent);
 };
 
 
