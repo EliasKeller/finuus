@@ -12,6 +12,8 @@ export function LineChartComponent({ data }) {
   const toolTip = useRef(null);
   const [chartData, setChartData] = useState([]);
   const [deltaInfo, setDeltaInfo] = useState(null); 
+  const [hoverPrice, setHoverPrice] = useState(null);
+  const [hoverDate, setHoverDate] = useState(null);
 
 /* *************************
           CONST
@@ -154,48 +156,37 @@ const onGraphClick = (clickEvent) => {
 
 const onGraphHover = (hoverEvent) => {
   console.log("hoverEvent", hoverEvent);
-};
-
-/*
-
-// Create and style the tooltip html element
-
-// update tooltip
-chart.subscribeCrosshairMove(param => {
-    if (
-        param.point === undefined ||
-        !param.time ||
-        param.point.x < 0 ||
-        param.point.x > container.clientWidth ||
-        param.point.y < 0 ||
-        param.point.y > container.clientHeight
+  if (
+        hoverEvent.point === undefined ||
+        !hoverEvent.time ||
+        hoverEvent.point.x < 0 ||
+        hoverEvent.point.x > chartRef.current.clientWidth ||
+        hoverEvent.point.y < 0 ||
+        hoverEvent.point.y > chartRef.current.clientHeight
     ) {
-        toolTip.style.display = 'none';
+      toolTip.current.style.display = 'none';
+        //toolTip.style.display = 'none';
     } else {
-        // time will be in the same format that we supplied to setData.
-        // thus it will be YYYY-MM-DD
-        const dateStr = param.time;
-        toolTip.style.display = 'block';
-        const data = param.seriesData.get(series);
-        const price = data.value !== undefined ? data.value : data.close;
-        toolTip.innerHTML = `<div style="color: ${'rgba( 239, 83, 80, 1)'}">⬤ ABC Inc.</div><div style="font-size: 24px; margin: 4px 0px; color: ${'black'}">
-            ${Math.round(100 * price) / 100}
-            </div><div style="color: ${'black'}">
-            ${dateStr}
-            </div>`;
-
-        let left = param.point.x; // relative to timeScale
-        const timeScaleWidth = chart.timeScale().width();
-        const priceScaleWidth = chart.priceScale('left').width();
-        const halfTooltipWidth = toolTipWidth / 2;
-        left += priceScaleWidth - halfTooltipWidth;
-        left = Math.min(left, priceScaleWidth + timeScaleWidth - toolTipWidth);
-        left = Math.max(left, priceScaleWidth);
-
-        toolTip.style.left = left + 'px';
-        toolTip.style.top = 0 + 'px';
+      toolTip.current.style.display = 'block';
+      const data = hoverEvent.seriesData.get(seriesRef.current);
+      const price = data.value;
+      setHoverPrice(Math.round(100 * price) / 100);
+      setHoverDate(hoverEvent.time);
+      let left = hoverEvent.point.x;
+      const chart = chartInstance.current;
+      const timeScaleWidth = chart.timeScale().width();
+      const priceScaleWidth = chart.priceScale('left').width();
+      const halfTooltipWidth = toolTipWidth / 2;
+      left += priceScaleWidth - halfTooltipWidth;
+      left = Math.min(left, priceScaleWidth + timeScaleWidth - toolTipWidth);
+      left = Math.max(left, priceScaleWidth);
+      toolTip.current.style.left = left + 'px';
+      toolTip.current.style.top = 50 + 'px';
+      // Set tooltip top position relative to chart container
+      const chartRect = chartRef.current.getBoundingClientRect();
+      toolTip.current.style.top = (hoverEvent.point.y) + 'px';
     }
-});*/
+};
 
   /* *************************
             HELPERS
@@ -243,6 +234,12 @@ const fitContent = () => {
 
         <div ref={chartRef} className="w-full h-96">
           <div ref={toolTip} style={{ display: 'none', borderColor: `rgba(239, 83, 80, 1)`, background: `rgba(255, 255, 255, 0.25)`, width: `${toolTipWidth}px`, height: '300px', position: 'absolute', padding: '8px', boxSizing: 'border-box', fontSize: '12px', textAlign: 'left', zIndex: 1000, top: '12px', left: '12px', pointerEvents: 'none', borderRadius: '4px 4px 0px 0px', borderBottom: 'none', boxShadow: '0 2px 5px 0 rgba(117, 134, 150, 0.45)', fontFamily: '-apple-system, BlinkMacSystemFont, \'Trebuchet MS\', Roboto, Ubuntu, sans-serif', WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
+            <div style={{ color: 'rgba( 41, 98, 255, 1)' }}>⬤ Data</div><div style={{ fontSize: '24px', margin: '4px 0px' }}>
+              {hoverPrice}
+            </div>
+            <div>
+              {hoverDate}
+            </div>
           </div>
         </div>
       </div>  
