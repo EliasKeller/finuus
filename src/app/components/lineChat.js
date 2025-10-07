@@ -155,7 +155,6 @@ const onGraphClick = (clickEvent) => {
 };
 
 const onGraphHover = (hoverEvent) => {
-  console.log("hoverEvent", hoverEvent);
   if (
         hoverEvent.point === undefined ||
         !hoverEvent.time ||
@@ -165,29 +164,17 @@ const onGraphHover = (hoverEvent) => {
         hoverEvent.point.y > chartRef.current.clientHeight
     ) {
       toolTip.current.style.display = 'none';
-        //toolTip.style.display = 'none';
     } else {
-      toolTip.current.style.display = 'block';
       const data = hoverEvent.seriesData.get(seriesRef.current);
       const price = data.value;
       setHoverPrice(Math.round(100 * price) / 100);
       setHoverDate(hoverEvent.time);
-      let left = hoverEvent.point.x;
-     /* const chart = chartInstance.current;
-      const timeScaleWidth = chart.timeScale().width();
-      const priceScaleWidth = chart.priceScale('left').width();
-      const halfTooltipWidth = toolTipWidth / 2;
-      left += priceScaleWidth - halfTooltipWidth;
-      left = Math.min(left, priceScaleWidth + timeScaleWidth - toolTipWidth);
-      left = Math.max(left, priceScaleWidth);
-      toolTip.current.style.left = left + 'px';
-      toolTip.current.style.top = 50 + 'px';*/
-      // Set tooltip top position relative to chart container
+      
       const chartRect = chartRef.current.getBoundingClientRect();
       toolTip.current.style.top = (chartRect.top) + 'px';
       toolTip.current.style.height = (chartRect.height) + 'px';
-      toolTip.current.style.marginLeft = (hoverEvent.sourceEvent.clientX - chartRect.left + (toolTipWidth / 2)) + 'px';
-      console.log("left", (hoverEvent.point.x));
+      toolTip.current.style.left = chartRect.left + hoverEvent.point.x + 'px';
+      toolTip.current.style.display = 'block';
     }
 };
 
