@@ -255,4 +255,9 @@ const HISTORICAL_STOCK_TEST_DATA = {
 
 const TWELVE_DATA_API_URL = "https://api.twelvedata.com";
 
-export { HISTORICAL_STOCK_TEST_DATA, TWELVE_DATA_API_URL };
+const ORDER_TYPE = {
+    BUY: "BUY",
+    SELL: "SELL"
+};
+
+export { HISTORICAL_STOCK_TEST_DATA, TWELVE_DATA_API_URL, ORDER_TYPE };

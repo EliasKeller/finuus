@@ -2,7 +2,6 @@
 "use client"
 import { useEffect, useState } from "react";
 import { getAllProducts, getHistoricalStockDataByIsbn, getMetadataOfProducts } from "../../api/services/stocks";
-import { LineChartComponent } from "./components/lineChat";
 import { PieChartComponent } from "./components/pieChart";
 import { Card } from "./components/card";
 export default function Home() {

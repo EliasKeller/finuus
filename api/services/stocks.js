@@ -11,6 +11,14 @@ const getAllOrders = () => {
     });
 };
 
+const getOrdersByIsin = (isin) => {
+    return new Promise((resolve, reject) => {
+        return fetch(`/api/orders?isin=${isin}`).then(r => r.json())
+            .then(resolve)
+            .catch(reject);
+    });
+};
+
 const getAllProducts = () => {
     return new Promise((resolve, reject) => {
         return fetch("/api/products").then(r => r.json())
@@ -53,6 +61,7 @@ const getHistoricalStockDataByIsbn = (isin, interval="1day", ) => {
 
 export { 
     getAllOrders, 
+    getOrdersByIsin,
     getAllProducts, 
     getMetadataOfProducts,
     getHistoricalStockDataByIsbn 

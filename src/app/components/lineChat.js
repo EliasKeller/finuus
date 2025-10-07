@@ -1,14 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { createChart, AreaSeries, ColorType } from "lightweight-charts";
+import { createChart, AreaSeries, ColorType, createSeriesMarkers } from "lightweight-charts";
 import { Button } from "./button";
 
-export function LineChartComponent({ data }) {
+export function LineChartComponent({ data , graphMarkers = []}) {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   const seriesRef = useRef(null);
   const anchorRef = useRef(null);
-  const toolTipWidth = 96;
   const toolTip = useRef(null);
   const [chartData, setChartData] = useState([]);
   const [deltaInfo, setDeltaInfo] = useState(null); 
@@ -18,6 +17,7 @@ export function LineChartComponent({ data }) {
 /* *************************
           CONST
   ************************* */
+  const toolTipWidth = 96;
   const getChartOptions = (chartContainerElement) => {
     return {
       width: chartContainerElement.clientWidth,
@@ -45,7 +45,7 @@ export function LineChartComponent({ data }) {
               visible: true,
               style: 0,
               width: 2,
-              color: 'rgba(0, 255, 76, 0.1)',
+              color: 'rgba(32, 38, 46, 0.1)',
               labelVisible: false,
           },
       },
@@ -89,9 +89,22 @@ export function LineChartComponent({ data }) {
       return;
     }
 
+    const markers = graphMarkers.map(marker => {
+      const [ day, month, year] = marker.date.split("-");
+      return {
+          time: { year: Number(year), month: Number(month), day: Number(day) },
+          position: 'aboveBar',
+          color: '#f68410',
+          shape: 'circle',
+          text: marker.type,
+        };
+    });
+    console.log(markers);
     const chart = createChart(chartContainerElement, getChartOptions(chartContainerElement));
 
     const series = chart.addSeries(AreaSeries, seriesOptions);
+
+    createSeriesMarkers(series, markers);
 
     const sortedData = sortData(data);
     series.priceScale().applyOptions(seriesPriceScaleOptions);
@@ -116,7 +129,7 @@ export function LineChartComponent({ data }) {
       chart.unsubscribeCrosshairMove(onGraphHover);
       chart.remove();
     };
-  }, [data]);
+  }, [data, graphMarkers]);
 
 
 /* *************************
