@@ -15,6 +15,8 @@ export function LineChartComponent({ data, orders=[] }) {
   const [deltaInfo, setDeltaInfo] = useState(null); 
   const [hoverPrice, setHoverPrice] = useState(null);
   const [hoverDate, setHoverDate] = useState(null);
+  const [activeGraphRange, setActiveGraphRange] = useState(null);
+  const suppressNextRangeChangeRef = useRef(false);
 
 /* *************************
           CONST
@@ -24,7 +26,7 @@ export function LineChartComponent({ data, orders=[] }) {
       width: chartContainerElement.clientWidth,
       height: chartContainerElement.clientHeight,
       layout: {
-        background: { type: ColorType.VerticalGradient, color: "black" },
+        background: { color: '#171717' },
         textColor: "white",
       },
       leftPriceScale: {
@@ -114,11 +116,9 @@ export function LineChartComponent({ data, orders=[] }) {
       createSeriesMarkers(series, markers);
     }
 
-
-
-
     chart.timeScale().fitContent();
 
+	  chart.timeScale().subscribeVisibleTimeRangeChange(onTimeRangeChange);
     chart.subscribeClick(onGraphClick);
     chart.subscribeCrosshairMove(onGraphHover);
 
@@ -141,6 +141,15 @@ export function LineChartComponent({ data, orders=[] }) {
 /* *************************
           EVENTS
   ************************* */
+ const onTimeRangeChange = (newVisibleTimeRange) => {
+  if (suppressNextRangeChangeRef.current) {
+    suppressNextRangeChangeRef.current = false;
+    return;
+  }
+
+  setActiveGraphRange(null);
+};
+
 const onGraphClick = (clickEvent) => {
       const serieData = clickEvent?.seriesData?.get(seriesRef.current);
       const value = serieData?.value;
@@ -206,29 +215,35 @@ const minusDaysIso = (isoYYYYMMDD, days) => {
   return date.toISOString().slice(0, 10);
 }
 
-const setRangeByDays = (days) => {
+const setRangeByDays = (days, graphRange) => {
   const chart = chartInstance.current;
   if (!chart || chartData.length === 0) return;
 
   const last = chartData.at(-1).time;
   const from = minusDaysIso(last, days);
+  setActiveGraphRange(graphRange);
   chart.timeScale().setVisibleRange({ from, to: last });
+
+  setActiveGraphRange(graphRange);
+  suppressNextRangeChangeRef.current = true;
 };
 
 const fitContent = () => {
   const chart = chartInstance.current;
   if (!chart) return;
   chart.timeScale().fitContent();
+  setActiveGraphRange("ALL");
+  suppressNextRangeChangeRef.current = true;
 };
 
   return (
-      <div className="w-full  p-4 border rounded-lg shadow-lg border-white">
+      <div className="w-full p-4 rounded-lg shadow-lg bg-neutral-900">
         <div className="flex justify-end gap-2 mb-2">
-              <Button onClick={() => setRangeByDays(1)} text="1D" gradientBackground={true} />
-              <Button onClick={() => setRangeByDays(7)} text="1W" gradientBackground={true} />
-              <Button onClick={() => setRangeByDays(30)} text="1M" gradientBackground={true} />
-              <Button onClick={() => setRangeByDays(365)} text="1Y" gradientBackground={true} />
-              <Button onClick={fitContent} text="All" gradientBackground={true} />
+        <Button onClick={() => setRangeByDays(1, "1D")} text="1D" isActive={activeGraphRange === "1D"} />
+        <Button onClick={() => setRangeByDays(7, "1W")} text="1W" isActive={activeGraphRange === "1W"} />
+        <Button onClick={() => setRangeByDays(30, "1M")} text="1M" isActive={activeGraphRange === "1M"} />
+        <Button onClick={() => setRangeByDays(365, "1Y")} text="1Y" isActive={activeGraphRange === "1Y"} />
+        <Button onClick={fitContent} text="All" isActive={activeGraphRange === "ALL"} />
         </div>
 
         {/* Δ-Info Anzeige */}

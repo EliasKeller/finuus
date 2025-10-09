@@ -52,7 +52,7 @@ export function Table({ data, columns, className = "" }) {
   };
 
   return (
-    <div className={`w-full overflow-x-auto border rounded-lg shadow-lg bg-black border-white ${className}`}>
+    <div className={`w-full overflow-x-auto rounded-lg shadow-lg bg-neutral-900 ${className}`}>
       <table className="w-full text-left">
         <thead className="border-b border-white/20">
           <tr>
