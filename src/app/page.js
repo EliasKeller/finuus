@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getAllProducts, getMetadataOfProducts } from "../../api/services/stocks";
 import { PieChartComponent } from "./components/pieChart";
 import { Card } from "./components/card";
-import { CardSkeleton } from "./components/cardSkeleton";
+import { CardSkeleton } from "./components/skeleton/cardSkeleton";
 export default function Home() {
   const [products, setProducts] = useState([]);
 

@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { getHistoricalStockDataByIsbn, getOrdersByIsin } from "../../../../api/services/stocks";
 import { LineChartComponent } from "../../components/lineChat";
 import { Table } from "../../components/table";
-import { TableSkeleton } from "../../components/tableSkeleton";
-import { LineChartSkeleton } from "../../components/lineChatSkeleton";
+import { TableSkeleton } from "../../components/skeleton/tableSkeleton";
+import { LineChartSkeleton } from "../../components/skeleton/lineChatSkeleton";
 
 export default function ProductDetailPage() {
   const params = useParams();
