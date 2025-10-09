@@ -22,7 +22,7 @@ export function ProductDetailCard({ orders = [], currency = "EUR", className = "
       {/* Product Header */}
       <div className="mb-6 flex items-center gap-4 border-b border-white/20 pb-4">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-black">
-          <Icon icon="iconoir:graph-up" className="text-xl" />
+          <Icon icon="iconoir:graph-up" className="text-3xl" />
         </div>
         <div className="flex-1">
           <h2 className="text-xl font-bold text-white">{productName}</h2>
@@ -80,13 +80,13 @@ export function ProductDetailCard({ orders = [], currency = "EUR", className = "
 
         {/* Profit/Loss - Spans 2 columns */}
         <div className="col-span-2 rounded-lg border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-end gap-3">
             <Icon
               icon={totalWin >= 0 ? "iconoir:arrow-up-circle" : "iconoir:arrow-down-circle"}
               className={`text-4xl ${totalWin >= 0 ? "text-green-500" : "text-red-500"}`}
             />
             <div className="flex-1">
-              <p className="text-sm text-gray-400">Total Profit/Loss</p>
+              <p className="text-sm text-gray-400">{totalWin >= 0 ? "Total Profit" : "Total Loss"}</p>
               <div className="flex items-baseline gap-3">
                 <p className={`text-xl font-bold ${totalWin >= 0 ? "text-green-500" : "text-red-500"}`}>
                   {totalWin >= 0 ? "+" : ""}
