@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getAllProducts, getMetadataOfProducts } from "../../api/services/stocks";
 import { PieChartComponent } from "./components/pieChart";
 import { Card } from "./components/card";
+import { CardSkeleton } from "./components/cardSkeleton";
 export default function Home() {
   const [products, setProducts] = useState([]);
 
@@ -26,6 +27,14 @@ export default function Home() {
   return (
     <div className="flex justify-center items-center flex-col">
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 place-items-center w-full">
+      {products.length === 0 && (
+        <>
+          <CardSkeleton className="w-full max-w-sm" />
+          <CardSkeleton className="w-full max-w-sm" />
+          <CardSkeleton className="w-full max-w-sm" />
+          <CardSkeleton className="w-full max-w-sm" />
+        </>
+      )}
       {products.map(element => (
         <Card
           className="w-full max-w-sm"
@@ -39,8 +48,6 @@ export default function Home() {
         />
       ))}
       </div>
-      
-       <PieChartComponent labels={labels} values={values} title="Portfolio" />
     </div>
   );
 }
