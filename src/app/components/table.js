@@ -4,11 +4,41 @@ import React, { useState, useMemo } from "react";
 
 export function Table({ data, columns, className = "" }) {
   const [sortKey, setSortKey] = useState(null);
-  const [sortDirection, setSortDirection] = useState(null); // "asc" | "desc" | null
+  const [sortDirection, setSortDirection] = useState(null);
 
+
+/* *************************
+          USEMEMO
+  ************************* */
+  const sortedData = useMemo(() => {
+    if (!sortKey || !sortDirection){
+      return data;
+    } 
+
+    return [...data].sort((a, b) => {
+      const aValue = a[sortKey];
+      const bValue = b[sortKey];
+
+      if (aValue == null) return 1;
+      if (bValue == null) return -1;
+
+      let comparison = 0;
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        comparison = aValue - bValue;
+      } else {
+        comparison = String(aValue).localeCompare(String(bValue));
+      }
+
+      return sortDirection === "asc" ? comparison : -comparison;
+    });
+  }, [data, sortKey, sortDirection]);
+
+
+/* *************************
+          HELPERS
+  ************************* */
   const handleSort = (columnKey) => {
     if (sortKey === columnKey) {
-      // Cycle through: asc -> desc -> null
       if (sortDirection === "asc") {
         setSortDirection("desc");
       } else if (sortDirection === "desc") {
@@ -20,30 +50,6 @@ export function Table({ data, columns, className = "" }) {
       setSortDirection("asc");
     }
   };
-
-  const sortedData = useMemo(() => {
-     const safe = Array.isArray(data) ? data : [];
-    if (!sortKey || !sortDirection) return safe;
-
-    return [...safe].sort((a, b) => {
-      const aValue = a[sortKey];
-      const bValue = b[sortKey];
-
-      // Handle null/undefined values
-      if (aValue == null) return 1;
-      if (bValue == null) return -1;
-
-      // Compare values
-      let comparison = 0;
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        comparison = aValue - bValue;
-      } else {
-        comparison = String(aValue).localeCompare(String(bValue));
-      }
-
-      return sortDirection === "asc" ? comparison : -comparison;
-    });
-  }, [data, sortKey, sortDirection]);
 
   return (
     <div className={`w-full overflow-x-auto border rounded-lg shadow-lg bg-black border-white ${className}`}>
@@ -57,23 +63,17 @@ export function Table({ data, columns, className = "" }) {
               return (
                 <th
                   key={column.key}
-                  className={`px-4 py-3 text-sm font-semibold text-white ${
-                    isSortable ? "cursor-pointer select-none hover:bg-white/5 transition-colors" : ""
-                  }`}
+                  className={`px-4 py-3 text-sm font-semibold text-white ${isSortable ? "cursor-pointer select-none hover:bg-white/5 transition-colors" : ""}`}
                   onClick={() => isSortable && handleSort(column.key)}
                 >
                   <div className="flex items-center gap-2">
                     {column.label}
                     {isSortable && (
-                      <span className="text-xs text-gray-400">
+                      <span className="text-s">
                         {isActiveSortColumn ? (
-                          sortDirection === "asc" ? (
-                            "↑"
-                          ) : (
-                            "↓"
-                          )
+                          sortDirection === "asc" ? ("↑") : ("↓")
                         ) : (
-                          <span className="opacity-30">↕</span>
+                          <span className="opacity-60">↕</span>
                         )}
                       </span>
                     )}

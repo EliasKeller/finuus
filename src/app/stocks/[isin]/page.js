@@ -11,19 +11,9 @@ export default function ProductDetailPage() {
   const [historicalData, setHistoricalData] = useState([]);
   const [orders, setOrders] = useState([]);
 
-  const loadHistoricalData = () => {
-    return Promise.all(
-      [
-        getHistoricalStockDataByIsbn(params.isin).then(data => setHistoricalData(data)),
-        getOrdersByIsin(params.isin).then(data => setOrders(data))
-      ]
-    ).catch(err => console.error("Error fetching historical stock data:", err)); 
-  }
-
-  useEffect(() => {
-    loadHistoricalData();
-  }, []);
-
+  /* *************************
+          CONST
+  ************************* */
   const columns = [
     {
       key: "date",
@@ -83,12 +73,32 @@ export default function ProductDetailPage() {
     },
   ]
 
+  /* *************************
+            USEFFECT
+  ************************* */
+  useEffect(() => {
+    loadHistoricalData();
+  }, []);
+
+  /* *************************
+          HELPERS
+  ************************* */
+  const loadHistoricalData = () => {
+    return Promise.all(
+      [
+        getHistoricalStockDataByIsbn(params.isin).then(data => setHistoricalData(data)),
+        getOrdersByIsin(params.isin).then(data => setOrders(data))
+      ]
+    ).catch(err => console.error("Error fetching historical stock data:", err)); 
+  }
+
+
   return (
     <div className="w-full flex flex-col items-center gap-8">
       <h1>Stock {params.isin}</h1>
       <div className="w-full lg:w-5/6 space-y-8 px-9 lg:px-0">
         <LineChartComponent data={historicalData} orders={orders} />
-        <Table columns={columns} data={orders} className="mt-4" />
+        <Table columns={columns} data={orders} />
       </div>
     </div>
   );
