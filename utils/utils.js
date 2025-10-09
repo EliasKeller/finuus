@@ -1,8 +1,8 @@
 import { ORDER_TYPE } from "./const";
 
-const mapHistoricalStockData = (data) => {
+const mapHistoricalStockData = (stockData) => {
 
-    return data.values.map(item => 
+    return (stockData.values ?? []).map(item => 
         {
             return {
                 time:item.datetime,

@@ -15,7 +15,6 @@ const getAllOrders = () => {
 const getOrdersByIsin = (isin) => {
     return new Promise((resolve, reject) => {
         return fetch(`/api/orders?isin=${isin}`).then(r => r.json())
-        .then(console.log)
             .then(resolve)
             .catch(reject);
     });

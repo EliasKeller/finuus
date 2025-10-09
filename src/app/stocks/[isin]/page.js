@@ -84,10 +84,12 @@ export default function ProductDetailPage() {
   ]
 
   return (
-    <div>
+    <div className="w-full flex flex-col items-center gap-8">
       <h1>Stock {params.isin}</h1>
-      <LineChartComponent data={historicalData} orders={orders} />
-      <Table columns={columns} data={orders} className="mt-4" />
+      <div className="w-full lg:w-5/6 space-y-8 px-9 lg:px-0">
+        <LineChartComponent data={historicalData} orders={orders} />
+        <Table columns={columns} data={orders} className="mt-4" />
+      </div>
     </div>
   );
 }

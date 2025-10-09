@@ -203,8 +203,7 @@ const fitContent = () => {
 };
 
   return (
-    <div className="flex justify-center w-full p-4">
-      <div className="flex flex-col justify-center w-full lg:w-5/6 p-4 border rounded-lg shadow-lg border-white">
+      <div className="w-full  p-4 border rounded-lg shadow-lg border-white">
         <div className="flex justify-end gap-2 mb-2">
               <Button onClick={() => setRangeByDays(1)} text="1D" gradientBackground={true} />
               <Button onClick={() => setRangeByDays(7)} text="1W" gradientBackground={true} />
@@ -233,6 +232,5 @@ const fitContent = () => {
           </div>
         </div>
       </div>  
-    </div>
   );
 }
