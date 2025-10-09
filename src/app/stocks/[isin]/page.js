@@ -7,6 +7,7 @@ import { LineChartComponent } from "../../components/lineChat";
 import { Table } from "../../components/table";
 import { TableSkeleton } from "../../components/skeleton/tableSkeleton";
 import { LineChartSkeleton } from "../../components/skeleton/lineChatSkeleton";
+import { ProductDetailCard } from "../../components/productDetailCard";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -99,6 +100,7 @@ export default function ProductDetailPage() {
     <div className="w-full flex flex-col items-center gap-8">
       <h1>Stock {params.isin}</h1>
       <div className="w-full lg:w-5/6 space-y-8 px-9 lg:px-0">
+        <ProductDetailCard />
         {!historicalData?.length ? <LineChartSkeleton /> : <LineChartComponent data={historicalData} orders={orders} />}
         {!orders?.length ? <TableSkeleton columns={columns} /> : <Table columns={columns} data={orders} />}
       </div>
