@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { createChart, AreaSeries, ColorType } from "lightweight-charts";
+import { createChart, createSeriesMarkers, AreaSeries, ColorType } from "lightweight-charts";
 import { Button } from "./button";
+import { ORDER_TYPE } from "../../../utils/const";
 
-export function LineChartComponent({ data }) {
+export function LineChartComponent({ data, orders=[] }) {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   const seriesRef = useRef(null);
@@ -98,6 +99,24 @@ export function LineChartComponent({ data }) {
     series.setData(sortedData);
     setChartData(sortedData);
 
+    
+    if (data.length > 0) {
+      // TODO: to refactor as soon as data contains all market data
+      const markers = orders.map(order => {
+      return         {
+              time: ((d) => ({year: d.getFullYear(), month: d.getMonth()+1, day: d.getDate()}))(new Date(data[Math.floor(Math.random()*data.length)].time)),
+              position: order.type == ORDER_TYPE.BUY ? 'aboveBar': 'belowBar',
+              color: order.type == ORDER_TYPE.BUY ? '#00c951' : '#e12a36',
+              shape: order.type == ORDER_TYPE.BUY ? 'arrowDown': 'arrowUp',
+              text: order.type,
+          }
+      });
+      createSeriesMarkers(series, markers);
+    }
+
+
+
+
     chart.timeScale().fitContent();
 
     chart.subscribeClick(onGraphClick);
@@ -116,7 +135,7 @@ export function LineChartComponent({ data }) {
       chart.unsubscribeCrosshairMove(onGraphHover);
       chart.remove();
     };
-  }, [data]);
+  }, [data, orders]);
 
 
 /* *************************
