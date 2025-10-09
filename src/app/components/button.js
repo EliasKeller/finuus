@@ -3,12 +3,14 @@
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 
-export function Button({ href, onClick, icon, text, gradientBackground=false }) {
-  const className = `inline-flex items-center gap-2 px-3 py-2 text-white rounded-lg cursor-pointer ${
-    gradientBackground
-      ? "bg-gradient-to-tr from-cyan-400 via-indigo-500 to-fuchsia-500 hover:bg-fuchsia-700/25 hover:bg-blend-overlay transition-colors"
-      : "bg-blue-500"
-  }`;
+export function Button({ href, onClick, icon, text, isActive = false }) {
+  let className = `inline-flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer border border-white`;
+
+  if (isActive) {
+    className += " bg-white text-black";
+  } else {
+    className += " text-white hover:bg-white hover:text-black transition-colors duration-200";
+  }
 
   if (href) {
     return (

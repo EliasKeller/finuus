@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { getHistoricalStockDataByIsbn, getOrdersByIsin } from "../../../../api/services/stocks";
 import { LineChartComponent } from "../../components/lineChat";
 import { Table } from "../../components/table";
+import { TableSkeleton } from "../../components/tableSkeleton";
+import { LineChartSkeleton } from "../../components/lineChatSkeleton";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -97,8 +99,8 @@ export default function ProductDetailPage() {
     <div className="w-full flex flex-col items-center gap-8">
       <h1>Stock {params.isin}</h1>
       <div className="w-full lg:w-5/6 space-y-8 px-9 lg:px-0">
-        <LineChartComponent data={historicalData} orders={orders} />
-        <Table columns={columns} data={orders} />
+        {!historicalData?.length ? <LineChartSkeleton /> : <LineChartComponent data={historicalData} orders={orders} />}
+        {!orders?.length ? <TableSkeleton columns={columns} /> : <Table columns={columns} data={orders} />}
       </div>
     </div>
   );
