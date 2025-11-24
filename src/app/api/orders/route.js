@@ -2,6 +2,8 @@ import fs from "fs";
 import path from "path";
 import csvsync from "csvsync";
 import { mapCsvOrdersData } from "../../../../utils/utils";
+import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 const readOrders = () => {
   const filePath = path.join(process.cwd(), "public", "data", "stocks.csv");
@@ -19,6 +21,18 @@ const readOrders = () => {
 }
 
 async function GET(request) {
+  const { userId } = auth();
+  console.log("userid check", userId)
+
+  if (!userId) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  if (process.env.ALLOWED_ADMIN_USER_ID && userId !== process.env.ALLOWED_ADMIN_USER_ID) {
+    return new NextResponse("Forbidden", { status: 403 });
+  }
+
+
   try {
     const url = new URL(request.url);
     const isin = url.searchParams.get("isin");

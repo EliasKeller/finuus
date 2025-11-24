@@ -21,8 +21,16 @@ const geistMono = Geist_Mono({
 
 
 export default function RootLayout({ children }) {
+
+    const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+    console.log("publishableKey check", publishableKey)
+  if (!publishableKey) {
+    throw new Error("Missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
+  }
+
     return (
-      <ClerkProvider>
+      <ClerkProvider publishableKey={publishableKey}>
         <html lang="en">
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
             <header className="flex justify-end items-center p-4 gap-4 h-16">
