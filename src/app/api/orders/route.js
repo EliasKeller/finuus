@@ -21,16 +21,17 @@ const readOrders = () => {
 }
 
 async function GET(request) {
-  const { userId } = auth();
+  const { isAuthenticated, userId } = await auth();
   console.log("userid check", userId)
 
-  if (!userId) {
-    return new NextResponse("Unauthorized", { status: 401 });
+  if (!userId || !isAuthenticated) {
+     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   if (process.env.ALLOWED_ADMIN_USER_ID && userId !== process.env.ALLOWED_ADMIN_USER_ID) {
-    return new NextResponse("Forbidden", { status: 403 });
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
+
 
 
   try {

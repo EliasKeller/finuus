@@ -5,7 +5,13 @@ import { getAllProducts, getMetadataOfProducts } from "../../api/services/stocks
 import { PieChartComponent } from "./components/pieChart";
 import { Card } from "./components/card";
 import { CardSkeleton } from "./components/skeleton/cardSkeleton";
+import { useAuth } from "@clerk/nextjs";
+
 export default function Home() {
+
+  const { isSignedIn, userId } = useAuth();
+  console.log("client auth", { isSignedIn, userId });
+  
   const [products, setProducts] = useState([]);
 
   const loadAllProducts = () => {
@@ -48,6 +54,9 @@ export default function Home() {
         />
       ))}
       </div>
+      <PieChartComponent labels={labels} values={values} title="Portfolio Distribution" />
     </div>
+
+
   );
 }
