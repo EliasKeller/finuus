@@ -104,8 +104,8 @@ export function LineChartComponent({ data, orders=[] }) {
     
     if (data.length > 0) {
       // TODO: to refactor as soon as data contains all market data
-      const markers = orders.map(order => {
-      return         {
+      const markers = orders?.map(order => {
+        return {
               time: ((d) => ({year: d.getFullYear(), month: d.getMonth()+1, day: d.getDate()}))(new Date(data[Math.floor(Math.random()*data.length)].time)),
               position: order.type == ORDER_TYPE.BUY ? 'aboveBar': 'belowBar',
               color: order.type == ORDER_TYPE.BUY ? '#00c951' : '#e12a36',
