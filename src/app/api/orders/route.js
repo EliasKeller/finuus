@@ -22,7 +22,6 @@ const readOrders = () => {
 
 async function GET(request) {
   const { isAuthenticated, userId } = await auth();
-  console.log("userid check", userId)
 
   if (!userId || !isAuthenticated) {
      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

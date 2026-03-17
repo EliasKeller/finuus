@@ -5,4 +5,9 @@ const ORDER_TYPE = {
     SELL: "SELL"
 };
 
-export { TWELVE_DATA_API_URL, ORDER_TYPE };
+const RESPONSE_STATUS = {
+    OK: "ok",
+    ERROR: "error"
+};
+
+export { TWELVE_DATA_API_URL, ORDER_TYPE, RESPONSE_STATUS };

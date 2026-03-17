@@ -8,6 +8,7 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs'
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +25,6 @@ export default function RootLayout({ children }) {
 
     const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-    console.log("publishableKey check", publishableKey)
   if (!publishableKey) {
     throw new Error("Missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
   }
@@ -57,6 +57,9 @@ export default function RootLayout({ children }) {
               </SignInButton>
             </div>
             </SignedOut>
+
+            <Toaster position="top-right" reverseOrder={false} />
+
           </body>
         </html>
       </ClerkProvider>

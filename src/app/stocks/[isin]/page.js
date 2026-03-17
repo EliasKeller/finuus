@@ -54,19 +54,19 @@ export default function ProductDetailPage() {
     {
       key: "amount",
       label: "Amount",
-      render: (value) => <span className="font-mono text-white">{value}</span>,
+      render: (value) => <span className="font-mono text-white">{value ? value : "N/A"}</span>,
     },
     {
       key: "course",
       label: "Price",
-      render: (value) => <span className="font-mono text-white">€{value.toFixed(2)}</span>,
+      render: (value) => <span className="font-mono text-white">€{value ? value.toFixed(2) : "N/A"}</span>,
     },
     {
       key: "totalValue",
       label: "Total Value",
       render: (value) => (
         <span className={`font-mono font-semibold ${value >= 0 ? "text-green-500" : "text-red-500"}`}>
-          €{value.toFixed(2)}
+          €{value ? value.toFixed(2) : "N/A"}
         </span>
       ),
     },

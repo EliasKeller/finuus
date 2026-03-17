@@ -1,6 +1,7 @@
 "use client";
 
-import { TWELVE_DATA_API_URL } from "../../utils/const";
+import toast from "react-hot-toast";
+import { RESPONSE_STATUS, TWELVE_DATA_API_URL } from "../../utils/const";
 import { mapHistoricalStockData } from "../../utils/utils";
 
 
@@ -35,6 +36,11 @@ const getMetadataOfProducts = (productIsbn = []) => {
     return new Promise((resolve, reject) => {
         return fetch(url).then(r => r.json())
             .then(response => {
+                console.log("metadata response check", response)
+                if (response.status === RESPONSE_STATUS.ERROR) {
+                    return Promise.reject(new Error(response.message));
+                }
+
                 const parsedProducts = Object.entries(response).map(([isin, obj]) => ({
                     isin,
                     ...obj
@@ -42,7 +48,11 @@ const getMetadataOfProducts = (productIsbn = []) => {
 
                 resolve(parsedProducts);
             })
-            .catch(reject);
+            .catch(error => {
+                toast.error("Something went wrong.");
+                console.error("Error fetching metadata:", error);
+                reject(error);
+            });
     });
 };
 

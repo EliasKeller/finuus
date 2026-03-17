@@ -10,7 +10,6 @@ import { useAuth } from "@clerk/nextjs";
 export default function Home() {
 
   const { isSignedIn, userId } = useAuth();
-  console.log("client auth", { isSignedIn, userId });
   
   const [products, setProducts] = useState([]);
 
